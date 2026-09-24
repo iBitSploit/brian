@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "./frontend"
+		},
+		{
+			"path": "./backend"
+		},
+		{
+			"path": "./"
+		}
+	],
+    "settings": {
+        "files.exclude": {
+            "frontend": true,
+            "backend": true
+        }
+    }
+}
