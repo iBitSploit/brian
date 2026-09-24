@@ -1,15 +1,18 @@
 {
-	"folders": [
-		{
-			"path": "./frontend"
-		},
-		{
-			"path": "./backend"
-		},
-		{
-			"path": "./"
-		}
-	],
+    "folders": [
+        {
+            "path": "./frontend",
+            "name": "1 🎨 Frontend"
+        },
+        {
+            "path": "./backend",
+            "name": "2 ⚙️ Backend"
+        },
+        {
+            "path": "./",
+            "name": "3 📁 Root"
+        }
+    ],
     "settings": {
         "files.exclude": {
             "frontend": true,
