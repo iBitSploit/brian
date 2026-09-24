@@ -9,14 +9,19 @@
             "name": "2 ⚙️ Backend"
         },
         {
+            "path": "./obsidian",
+            "name": "3 🧠 Obsidian"
+        },
+        {
             "path": "./",
-            "name": "3 📁 Root"
+            "name": "4 📁 Root"
         }
     ],
     "settings": {
         "files.exclude": {
             "frontend": true,
-            "backend": true
+            "backend": true,
+			"obsidian": true
         }
     }
 }
