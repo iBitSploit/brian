@@ -1,198 +1,225 @@
-import { useEffect, useState } from 'react'
-import {
-  Activity,
-  AlertTriangle,
-  Boxes,
-  Cable,
-  Check,
-  ChevronRight,
-  CircleHelp,
-  Cloud,
-  Database,
-  FileUp,
-  Filter,
-  Gauge,
-  HardDrive,
-  LayoutDashboard,
-  Moon,
-  Network,
-  Pencil,
-  Plus,
-  RefreshCw,
-  Search,
-  Server,
-  Settings,
-  Shield,
-  Sun,
-  Trash2,
-  Upload,
-  Users,
-  X,
-  Zap,
-} from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import { DashboardView } from './views/Dashboard'
+import { TopologyView } from './views/Topology'
+import { DevicesView } from './views/Devices'
+import { IntegrationsView } from './views/Integrations'
+import { AgentsView } from './views/Agents'
+import { ScansView } from './views/Scans'
+import { IconsView } from './views/Icons'
+import { SettingsView } from './views/Settings'
+import { HelpView } from './views/Help'
+import { DEVICES, AGENTS } from './data'
 
-type View = 'dashboard' | 'topology' | 'devices' | 'integrations' | 'agents' | 'scans' | 'icons' | 'settings' | 'help'
-type AgentStatus = 'Online' | 'Degraded' | 'Offline'
+export type View = 'dashboard' | 'topology' | 'devices' | 'integrations' | 'agents' | 'scans' | 'icons' | 'settings' | 'help'
+export type Theme = 'dark' | 'light'
 
-type Agent = {
-  name: string
-  ip: string
-  os: string
-  connectionDate: string
-  location: string
-  status: AgentStatus
+const VIEW_LABELS: Record<View, string> = {
+  dashboard: 'Dashboard', topology: 'Topology', devices: 'Devices',
+  integrations: 'Integrations', agents: 'Agents', scans: 'Scan uploads',
+  icons: 'Icon library', settings: 'Settings', help: 'Documentation',
 }
 
-const agents: Agent[] = [
-  { name: 'HQ-Scanner-01', ip: '10.20.0.15', os: 'Ubuntu 24.04 LTS', connectionDate: '2026-09-18 09:42 UTC', location: 'Headquarters', status: 'Online' },
-  { name: 'Remote-Office-East', ip: '10.42.8.21', os: 'Debian 12', connectionDate: '2026-09-20 14:16 UTC', location: 'Remote office', status: 'Degraded' },
-  { name: 'Cloud-Discovery-01', ip: '172.31.16.44', os: 'Rocky Linux 9', connectionDate: '2026-09-22 18:05 UTC', location: 'Cloud VPC', status: 'Offline' },
+const NAV: { section: string; items: { view: View; icon: string; label: string; count?: number }[] }[] = [
+  {
+    section: 'Workspace',
+    items: [
+      { view: 'dashboard', icon: '⌂', label: 'Dashboard' },
+      { view: 'topology', icon: '⌘', label: 'Topology' },
+      { view: 'devices', icon: '▦', label: 'Devices', count: DEVICES.length },
+      { view: 'scans', icon: '⌁', label: 'Scan uploads' },
+    ],
+  },
+  {
+    section: 'Operations',
+    items: [
+      { view: 'integrations', icon: '↗', label: 'Integrations' },
+      { view: 'agents', icon: '◈', label: 'Agents', count: AGENTS.length },
+      { view: 'icons', icon: '✦', label: 'Icon library' },
+    ],
+  },
+  {
+    section: 'System',
+    items: [
+      { view: 'settings', icon: '⚙', label: 'Settings' },
+      { view: 'help', icon: '?', label: 'Documentation' },
+    ],
+  },
 ]
 
-const navGroups = [
-  { label: 'Workspace', items: [['dashboard', 'Dashboard', LayoutDashboard], ['topology', 'Topology', Network], ['devices', 'Devices', Boxes], ['scans', 'Scan uploads', FileUp]] },
-  { label: 'Operations', items: [['integrations', 'Integrations', Cable], ['agents', 'Agents', Users], ['icons', 'Icon library', Shield]] },
-  { label: 'System', items: [['settings', 'Settings', Settings], ['help', 'Documentation', CircleHelp]] },
-] as const
-
-function App() {
-  const [view, setView] = useState<View>('dashboard')
-  const [dark, setDark] = useState(() => localStorage.getItem('brian-theme') !== 'light')
-  const [notice, setNotice] = useState('')
-  const [search, setSearch] = useState('')
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = dark ? 'dark' : 'light'
-    localStorage.setItem('brian-theme', dark ? 'dark' : 'light')
-  }, [dark])
-
-  useEffect(() => {
-    if (!notice) return
-    const timer = window.setTimeout(() => setNotice(''), 2200)
-    return () => window.clearTimeout(timer)
-  }, [notice])
-
-  const go = (next: View) => setView(next)
-  const action = (message: string) => setNotice(message)
-
+function Toast({ message }: { message: string | null }) {
   return (
-    <div className="app-shell">
-      <aside className="sidebar">
-        <div className="brand">
-          <span className="brand-mark">B</span>
-          <span><strong>brian</strong><small>network intelligence</small></span>
-        </div>
-        <nav className="nav-stack" aria-label="Primary navigation">
-          {navGroups.map((group) => (
-            <div className="nav-group" key={group.label}>
-              <p className="nav-label">{group.label}</p>
-              {group.items.map(([id, label, Icon]) => (
-                <button className={`nav-item ${view === id ? 'active' : ''}`} key={id} onClick={() => go(id as View)}>
-                  <Icon size={16} />{label}
-                </button>
-              ))}
-            </div>
-          ))}
-        </nav>
-        <div className="sidebar-status">
-          <p className="nav-label">System status</p>
-          <span><i className="status-dot online" /> Brian API ready</span>
-          <span><i className="status-dot cyan" /> Mock data mode</span>
-        </div>
-      </aside>
-
-      <main className="main-content">
-        <header className="topbar">
-          <div className="breadcrumb"><span>Workspace</span><ChevronRight size={14} /><strong>{viewTitle(view)}</strong></div>
-          <div className="topbar-actions">
-            <label className="search-box"><Search size={15} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search devices, IPs, tags..." /></label>
-            <button className="icon-button" title="Toggle theme" onClick={() => setDark(!dark)}>{dark ? <Sun size={17} /> : <Moon size={17} />}</button>
-            <button className="icon-button" title="Notifications" onClick={() => action('No new notifications')}><Activity size={17} /></button>
-            <button className="button primary" onClick={() => go('topology')}>Open topology</button>
-          </div>
-        </header>
-
-        <div className="page-content">
-          {view === 'dashboard' && <Dashboard go={go} />}
-          {view === 'topology' && <Topology go={go} action={action} />}
-          {view === 'devices' && <Devices action={action} />}
-          {view === 'integrations' && <Integrations action={action} />}
-          {view === 'agents' && <Agents action={action} />}
-          {view === 'scans' && <Scans action={action} />}
-          {view === 'icons' && <Icons action={action} />}
-          {view === 'settings' && <SettingsView dark={dark} setDark={setDark} action={action} />}
-          {view === 'help' && <Help />}
-        </div>
-      </main>
-      {notice && <div className="toast"><Check size={15} />{notice}</div>}
-    </div>
+    <div style={{
+      position: 'fixed', right: 25, bottom: 25, zIndex: 100,
+      transform: message ? 'translateY(0)' : 'translateY(90px)',
+      padding: '11px 16px', border: '1px solid var(--accent)', borderRadius: 8,
+      background: 'var(--panel-strong)', color: 'var(--text)', boxShadow: 'var(--shadow)',
+      transition: '.25s cubic-bezier(.34,1.56,.64,1)', pointerEvents: 'none', fontSize: 13,
+    }}>{message ?? ''}</div>
   )
 }
 
-function viewTitle(view: View) {
-  return { dashboard: 'Dashboard', topology: 'Topology', devices: 'Devices', integrations: 'Integrations', agents: 'Agents', scans: 'Scan uploads', icons: 'Icon library', settings: 'Settings', help: 'Documentation' }[view]
-}
+export default function App() {
+  const [view, setView] = useState<View>('dashboard')
+  const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem('brian-theme') as Theme) ?? 'dark')
+  const [toast, setToast] = useState<string | null>(null)
+  const [search, setSearch] = useState('')
 
-function Heading({ eyebrow, title, description, children }: { eyebrow: string; title: string; description: string; children?: React.ReactNode }) {
-  return <div className="view-heading"><div><p className="eyebrow">{eyebrow}</p><h1>{title}</h1><p className="lede">{description}</p></div>{children && <div className="actions">{children}</div>}</div>
-}
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('brian-theme', theme)
+  }, [theme])
 
-function Dashboard({ go }: { go: (view: View) => void }) {
-  return <>
-    <Heading eyebrow="Overview / 24 September 2026" title="Infrastructure at a glance" description="A quiet control room for discovering, understanding, and operating your network.">
-      <button className="button" onClick={() => go('integrations')}>Connect source</button><button className="button primary" onClick={() => go('devices')}>Add device</button>
-    </Heading>
-    <div className="metrics"><Metric label="Devices" value="0" note="No inventory imported" /><Metric label="Connections" value="0" note="Topology is empty" /><Metric label="Data sources" value="3" note="Mock agents connected" /><Metric label="Last scan" value="--" note="Awaiting first discovery" /></div>
-    <div className="dashboard-grid"><Card title="Recent activity" subtitle="Syncs, imports, and topology changes"><Empty icon={<Activity />} title="No activity yet" text="Connect NetBox or upload a scan to begin building your topology." /></Card><Card title="Getting started" subtitle="A short path to your first topology"><div className="activity-list"><ActivityStep color="green" title="Connect a data source" text="NetBox, scanner, or manual entry" /><ActivityStep color="cyan" title="Review your devices" text="Search, tag, and categorize assets" /><ActivityStep color="amber" title="Arrange the topology" text="Choose a layout and save positions" /></div></Card></div>
-  </>
-}
+  const showToast = useCallback((msg: string) => {
+    setToast(msg)
+    setTimeout(() => setToast(null), 2400)
+  }, [])
 
-function Topology({ go, action }: { go: (view: View) => void; action: (message: string) => void }) {
-  return <><Heading eyebrow="Workspace / Graph" title="Topology" description="Map relationships, interfaces, and operational state on a focused canvas"><button className="button" onClick={() => action('Topology export queued')}>Export</button><button className="button primary" onClick={() => action('Connection editor opened')}>Add connection</button></Heading><div className="topology-shell"><aside className="topology-controls"><p className="nav-label">View controls</p><Field label="Layout"><select><option>Hierarchical</option><option>Force-directed</option><option>Radial</option><option>Breadth-first</option></select></Field><Field label="Group by"><select><option>None</option><option>Site</option><option>Network</option><option>Device type</option></select></Field><CheckBox label="Show grid" checked /><CheckBox label="Snap to grid" /><CheckBox label="Show labels" checked /><div className="filter-box"><strong>Filters</strong><span>Online <b>0</b></span><span>Offline <b>0</b></span><span>Unknown <b>0</b></span><button className="link-button" onClick={() => action('Filter manager opened')}>Manage filters <ChevronRight size={13} /></button></div></aside><div className="canvas"><div className="canvas-tools"><span><button className="tool-button" onClick={() => action('Zoomed out')}>−</button><button className="tool-button" onClick={() => action('Zoomed in')}>＋</button><button className="tool-button" onClick={() => action('Fit to screen')}>⌗</button><button className="tool-button" onClick={() => action('Layout reset')}>↻</button></span><span><button className="tool-button active">↖</button><button className="tool-button" onClick={() => action('Pan mode enabled')}>✥</button><button className="tool-button" onClick={() => go('devices')}>＋</button></span></div><div className="canvas-empty"><div><div className="empty-mark"><Network size={21} /></div><h2>Your topology is empty</h2><p>Import infrastructure, add a device manually, or connect an agent to see relationships here.</p><button className="button primary" onClick={() => go('devices')}>Add first device</button></div></div><div className="legend"><span><i className="legend-line" /> Direct link</span><span><i className="legend-line dashed" /> Inferred link</span></div></div><aside className="inspector"><p className="nav-label">Inspector</p><Empty icon={<Search />} title="Nothing selected" text="Select a node or connection to inspect details." /></aside></div></>
-}
+  const navigate = useCallback((v: View) => {
+    setView(v)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
 
-function Devices({ action }: { action: (message: string) => void }) {
-  return <><Heading eyebrow="Inventory / Assets" title="Devices" description="The source of truth for discovered and manually managed infrastructure"><button className="button" onClick={() => action('Bulk import opened')}>Bulk import</button><button className="button primary" onClick={() => action('Device form opened')}>Add device</button></Heading><Card><div className="table-toolbar"><label className="search-box"><Search size={15} /><input placeholder="Filter device inventory" /></label><button className="button" onClick={() => action('Saved views opened')}><Filter size={14} />Saved views</button></div><Empty icon={<Boxes />} title="No devices found" text="Add a device manually or import a source to populate the inventory." /></Card></>
-}
+  function toggleTheme() {
+    const next: Theme = theme === 'dark' ? 'light' : 'dark'
+    setTheme(next)
+    showToast(next === 'dark' ? 'Dark theme enabled' : 'Light theme enabled')
+  }
 
-function Integrations({ action }: { action: (message: string) => void }) {
-  return <><Heading eyebrow="Operations / Sources" title="Integrations" description="Connect inventory and reconnaissance systems to Brian"><button className="button primary" onClick={() => action('Integration picker opened')}><Plus size={15} />Add integration</button></Heading><div className="tabs"><button className="tab active">NetBox</button><button className="tab">Scan sources</button><button className="tab">API access</button></div><Card title="NetBox connection" subtitle="Read-only synchronization of devices, sites, interfaces, and IP addresses"><div className="form-grid"><Field label="NetBox URL"><input placeholder="https://netbox.example.com" /></Field><Field label="API token"><input type="password" placeholder="Enter token securely" /></Field><Field label="Sync interval"><select><option>Every 1 hour</option><option>Every 6 hours</option><option>Every 12 hours</option><option>Every 24 hours</option></select></Field><Field label="Conflict policy"><select><option>Manual merge</option><option>Timestamp wins</option><option>NetBox preference</option></select></Field></div><div className="actions"><button className="button" onClick={() => action('Connection test completed')}>Test connection</button><button className="button primary" onClick={() => action('NetBox configuration saved')}>Save configuration</button></div></Card><AgentTable action={action} /></>
-}
+  const onlineDevices = DEVICES.filter(d => d.status === 'online').length
+  const offlineDevices = DEVICES.filter(d => d.status === 'offline').length
+  const degradedAgents = AGENTS.filter(a => a.status === 'degraded').length
 
-function AgentTable({ action }: { action: (message: string) => void }) {
-  return <Card title="Connected agents" subtitle="Agents reporting to this Brian instance."><div className="table-scroll"><table><thead><tr><th>Name</th><th>IP Address</th><th>System OS</th><th>Connection Date</th><th>Actions</th></tr></thead><tbody>{agents.map((agent) => <tr key={agent.name}><td><strong className="agent-name"><i className={`status-dot ${agent.status.toLowerCase()}`} />{agent.name}</strong></td><td>{agent.ip}</td><td>{agent.os}</td><td>{agent.connectionDate}</td><td><div className="row-actions"><IconAction icon={<Trash2 />} label={`Remove ${agent.name}`} danger action={action} /><IconAction icon={<RefreshCw />} label={`Refresh ${agent.name}`} action={action} /><IconAction icon={<Pencil />} label={`Edit ${agent.name}`} action={action} /></div></td></tr>)}</tbody></table></div></Card>
-}
+  return (
+    <div data-theme={theme} style={{ display: 'grid', gridTemplateColumns: '238px minmax(0,1fr)', minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)' }}>
+      {/* Sidebar */}
+      <aside style={{ display: 'flex', flexDirection: 'column', padding: '22px 14px 18px', borderRight: '1px solid var(--border)', background: 'var(--panel)', position: 'sticky', top: 0, height: '100vh', overflowY: 'auto' }}>
+        {/* Brand */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 11, padding: '2px 10px 22px' }}>
+          <span style={{ display: 'grid', placeItems: 'center', width: 30, height: 30, border: '1px solid var(--accent)', borderRadius: 8, color: 'var(--accent)', fontWeight: 800, fontSize: 16, transform: 'rotate(-8deg)', flexShrink: 0 }}>B</span>
+          <span>
+            <span style={{ display: 'block', fontSize: 18, fontWeight: 700, letterSpacing: '-.04em', lineHeight: 1.1 }}>brian</span>
+            <span style={{ display: 'block', color: 'var(--muted)', fontSize: 10, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase' }}>network intel</span>
+          </span>
+        </div>
 
-function Agents({ action }: { action: (message: string) => void }) {
-  return <><Heading eyebrow="Operations / Distributed discovery" title="Agents" description="Deploy scanners near remote subnets and keep their health visible."><button className="button primary" onClick={() => action('Agent registration opened')}><Plus size={15} />Register agent</button></Heading><AgentTable action={action} /></>
-}
+        {/* Status bar */}
+        <div style={{ margin: '0 2px 20px', padding: '10px 12px', background: 'var(--panel-strong)', border: '1px solid var(--border)', borderRadius: 8 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 4 }}>
+            <span style={{ color: 'var(--muted)' }}>Devices</span>
+            <span style={{ color: offlineDevices > 0 ? 'var(--amber)' : 'var(--accent)' }}>{onlineDevices}/{DEVICES.length} online</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11 }}>
+            <span style={{ color: 'var(--muted)' }}>Agents</span>
+            <span style={{ color: degradedAgents > 0 ? 'var(--amber)' : 'var(--accent)' }}>
+              {AGENTS.filter(a => a.status === 'online').length}/{AGENTS.length} active{degradedAgents > 0 ? ` · ${degradedAgents} degraded` : ''}
+            </span>
+          </div>
+          {degradedAgents > 0 && (
+            <div style={{ marginTop: 8, fontSize: 10, color: 'var(--amber)', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span>⚠</span> Legacy-DC2-Scanner degraded
+            </div>
+          )}
+        </div>
 
-function Scans({ action }: { action: (message: string) => void }) {
-  return <><Heading eyebrow="Discovery / Imports" title="Scan uploads" description="Parse reconnaissance output, preview changes, and choose how findings merge into inventory" /><Card title="Upload scan results" subtitle="Supported sources: nmap XML, dnsrecon JSON/XML, Ettercap data, and generic JSON."><div className="form-grid"><Field label="Scan source"><select><option>Nmap XML</option><option>Dnsrecon JSON/XML</option><option>Ettercap</option><option>Custom JSON</option></select></Field><Field label="Conflict resolution"><select><option>Merge</option><option>Replace</option><option>Review conflicts</option></select></Field></div><div className="dropzone"><Upload size={22} /><strong>Drop a scan file here</strong><span>or browse from your computer</span><button className="button" onClick={() => action('File picker opened')}>Choose file</button></div><button className="button primary" disabled>Preview parsed data</button></Card><Card title="Recent scan results" subtitle="Raw data and import summaries"><Empty icon={<FileUp />} title="No scans uploaded" text="Completed imports and validation errors will be listed here." /></Card></>
-}
+        {/* Nav */}
+        <nav style={{ flex: 1 }}>
+          {NAV.map(({ section, items }, si) => (
+            <div key={section} style={{ marginBottom: 24 }}>
+              <div style={{ padding: '0 10px 8px', color: 'var(--faint)', fontSize: 10, fontWeight: 700, letterSpacing: '.13em', textTransform: 'uppercase' }}>{section}</div>
+              <div style={{ display: 'grid', gap: 2 }}>
+                {items.map(({ view: v, icon, label, count }) => {
+                  const active = view === v
+                  return (
+                    <button key={v} onClick={() => navigate(v)} style={{
+                      display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '9px 12px',
+                      border: `1px solid ${active ? 'var(--border-bright)' : 'transparent'}`,
+                      borderRadius: 7, background: active ? 'var(--panel-strong)' : 'transparent',
+                      color: active ? 'var(--accent)' : 'var(--muted)', textAlign: 'left', cursor: 'pointer', fontSize: 13, fontWeight: active ? 600 : 400,
+                      transition: '.15s ease',
+                    }}>
+                      <span style={{ width: 18, textAlign: 'center', fontSize: 14, flexShrink: 0 }}>{icon}</span>
+                      <span style={{ flex: 1 }}>{label}</span>
+                      {count !== undefined && (
+                        <span style={{ fontSize: 10, color: active ? 'var(--accent)' : 'var(--faint)', background: 'var(--panel-soft)', padding: '1px 6px', borderRadius: 10, fontWeight: 600 }}>{count}</span>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
+        </nav>
 
-function Icons({ action }: { action: (message: string) => void }) {
-  return <><Heading eyebrow="System / Visual language" title="Icon library" description="Use consistent symbols to distinguish infrastructure types at a glance"><button className="button primary" onClick={() => action('Icon upload opened')}><Upload size={15} />Upload icon</button></Heading><Card title="Built-in icons" subtitle="Custom icons can be mapped to a device type or individual device."><Empty icon={<Shield />} title="No custom icons added" text="Upload SVG or PNG assets when the icon library is connected to the API." /></Card></>
-}
+        {/* Bottom */}
+        <div style={{ padding: '16px 10px 0', borderTop: '1px solid var(--border)', fontSize: 11, color: 'var(--faint)' }}>
+          <div>brian v0.9.1-alpha</div>
+          <div>Open-source · Self-hosted</div>
+        </div>
+      </aside>
 
-function SettingsView({ dark, setDark, action }: { dark: boolean; setDark: (value: boolean) => void; action: (message: string) => void }) {
-  return <><Heading eyebrow="System / Preferences" title="Settings" description="Configure how Brian looks, behaves, and stores operational preferences"><button className="button primary" onClick={() => action('Settings saved')}>Save changes</button></Heading><Card title="Appearance" subtitle="Keep the workspace comfortable during long operations."><Setting title="Dark theme" text="Use the low-glare control room palette by default." checked={dark} onChange={setDark} /><Setting title="System theme detection" text="Use the operating system preference when no choice is saved." /><Setting title="Reduced motion" text="Limit transitions and non-essential animation." /></Card><Card title="Topology defaults" subtitle="Set the starting presentation for new sessions."><div className="form-grid"><Field label="Default layout"><select><option>Hierarchical</option><option>Force-directed</option><option>Radial</option></select></Field><Field label="Default grouping"><select><option>None</option><option>Site</option><option>Network</option><option>Device type</option></select></Field></div></Card></>
-}
+      {/* Main */}
+      <main style={{ minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        {/* Topbar */}
+        <header style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, height: 66,
+          padding: '0 28px', borderBottom: '1px solid var(--border)',
+          background: 'color-mix(in srgb, var(--bg) 85%, transparent)', backdropFilter: 'blur(12px)',
+          position: 'sticky', top: 0, zIndex: 10,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--muted)', fontSize: 13 }}>
+            <span>Workspace</span>
+            <span style={{ color: 'var(--faint)' }}>/</span>
+            <strong style={{ color: 'var(--text)', fontSize: 15 }}>{VIEW_LABELS[view]}</strong>
+          </div>
 
-function Help() {
-  const cards = [['01 / Start', 'First topology', 'Connect NetBox or add a device manually, then arrange and inspect relationships.'], ['02 / Discover', 'Scan ingestion', 'Upload nmap, dnsrecon, Ettercap, or generic JSON and review the parsed preview.'], ['03 / Extend', 'Distributed agents', 'Register outbound-only agents for remote subnets and track their provenance.'], ['04 / Secure', 'API tokens', 'Use scoped bearer tokens, HTTPS, and redacted operational logs.'], ['05 / Operate', 'State semantics', 'State is shown through color, borders, icons, labels, and opacity.'], ['06 / Export', 'Evidence and reports', 'Export filtered inventory as CSV/JSON or render topology as SVG/PNG.']]
-  return <><Heading eyebrow="Reference / Brian" title="Documentation" description="The essential paths for operating a self-hosted topology workspace"><button className="button" onClick={() => window.open('/api/v1', '_blank')}>Open API reference</button></Heading><div className="help-grid">{cards.map(([eyebrow, title, text]) => <Card key={title}><p className="eyebrow">{eyebrow}</p><h2>{title}</h2><p className="muted">{text}</p></Card>)}</div></>
-}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+            {/* Search */}
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 11px', border: '1px solid var(--border)', borderRadius: 7, background: 'var(--panel)', color: 'var(--muted)', width: 260, cursor: 'text' }}>
+              <span style={{ flexShrink: 0, fontSize: 15 }}>⌕</span>
+              <input
+                type="search"
+                placeholder="Search devices, IPs, tags…"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                style={{ width: '100%', border: 0, outline: 0, background: 'transparent', color: 'var(--text)', padding: 0, fontSize: 13 }}
+              />
+            </label>
 
-function Card({ title, subtitle, children }: { title?: string; subtitle?: string; children: React.ReactNode }) {
-  return <section className="card">{title && <div className="card-header"><div><h2>{title}</h2>{subtitle && <p>{subtitle}</p>}</div></div>}{children}</section>
-}
-function Metric({ label, value, note }: { label: string; value: string; note: string }) { return <div className="metric"><p className="eyebrow">{label}</p><strong>{value}</strong><span>{note}</span></div> }
-function Empty({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) { return <div className="empty"><div className="empty-mark">{icon}</div><strong>{title}</strong><p>{text}</p></div> }
-function ActivityStep({ color, title, text }: { color: string; title: string; text: string }) { return <div className="activity-step"><i className={`status-dot ${color}`} /><div><strong>{title}</strong><small>{text}</small></div><ChevronRight size={15} /></div> }
-function Field({ label, children }: { label: string; children: React.ReactNode }) { return <label className="field"><span>{label}</span>{children}</label> }
-function CheckBox({ label, checked }: { label: string; checked?: boolean }) { return <label className="check"><input type="checkbox" defaultChecked={checked} />{label}</label> }
-function IconAction({ icon, label, danger, action }: { icon: React.ReactNode; label: string; danger?: boolean; action: (message: string) => void }) { return <button className={`icon-action ${danger ? 'danger' : ''}`} title={label} aria-label={label} onClick={() => action(`${label} selected`)}>{icon}</button> }
-function Setting({ title, text, checked, onChange }: { title: string; text: string; checked?: boolean; onChange?: (value: boolean) => void }) { return <div className="setting"><div><strong>{title}</strong><span>{text}</span></div><label className="switch"><input type="checkbox" checked={checked} onChange={(event) => onChange?.(event.target.checked)} /><i /></label></div> }
+            {/* Theme toggle */}
+            <button onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`} style={{
+              width: 34, height: 34, border: '1px solid var(--border-bright)', borderRadius: 7,
+              background: 'var(--panel)', color: 'var(--muted)', cursor: 'pointer', fontSize: 15, display: 'grid', placeItems: 'center',
+            }}>◐</button>
 
-export default App
+            {/* Notifications */}
+            <button title="Notifications" style={{ position: 'relative', width: 34, height: 34, border: '1px solid var(--border-bright)', borderRadius: 7, background: 'var(--panel)', color: 'var(--muted)', cursor: 'pointer', fontSize: 15, display: 'grid', placeItems: 'center' }}>
+              ♢
+              {degradedAgents > 0 && <span style={{ position: 'absolute', top: 6, right: 6, width: 7, height: 7, borderRadius: '50%', background: 'var(--amber)', border: '1.5px solid var(--panel)' }} />}
+            </button>
+
+            <button onClick={() => navigate('topology')} style={{
+              display: 'inline-flex', alignItems: 'center', gap: 7, minHeight: 34,
+              border: '1px solid var(--accent)', borderRadius: 7, background: 'var(--accent)', color: 'var(--accent-ink)',
+              padding: '7px 14px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+            }}>⌘ Open topology</button>
+          </div>
+        </header>
+
+        {/* Content */}
+        <div style={{ padding: '26px 28px 60px', flex: 1 }}>
+          {view === 'dashboard' && <DashboardView navigate={navigate} />}
+          {view === 'topology' && <TopologyView navigate={navigate} />}
+          {view === 'devices' && <DevicesView />}
+          {view === 'integrations' && <IntegrationsView />}
+          {view === 'agents' && <AgentsView />}
+          {view === 'scans' && <ScansView />}
+          {view === 'icons' && <IconsView />}
+          {view === 'settings' && <SettingsView theme={theme} setTheme={t => { setTheme(t); showToast(t === 'dark' ? 'Dark theme enabled' : 'Light theme enabled') }} />}
+          {view === 'help' && <HelpView navigate={navigate} />}
+        </div>
+      </main>
+
+      <Toast message={toast} />
+    </div>
+  )
+}
