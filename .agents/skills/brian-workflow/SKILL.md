@@ -1,6 +1,6 @@
 ---
-name: brian-agent
-description: "Use when working on the Brian network topology platform, especially its React frontend, topology visualization, device inventory, NetBox integration, scan ingestion, distributed agents, icons, or project documentation."
+name: brian-workflow
+description: "Use when working on the Brian network topology platform, especially its React frontend, Flask backend, topology visualization, device inventory, NetBox integration, scan ingestion, distributed agents, icons, or project documentation."
 ---
 
 # Brian Project Workflow
