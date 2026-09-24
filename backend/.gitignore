@@ -14,17 +14,10 @@ htmlcov/
 .ruff_cache/
 
 # Python environments
-.venv/
 venv/
-env/
-ENV/
-backend/venv/
 
 # Flask and local application data
 .env
-.env.*
-!.env.example
 *.db
 *.sqlite
 *.sqlite3
-instance/
