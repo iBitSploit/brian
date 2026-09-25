@@ -7,9 +7,9 @@
 - Phase: MVP foundation
 - Frontend: React, TypeScript, Vite, local mock data
 - Backend: Flask API with JWT, SQLAlchemy, Marshmallow, migrations configuration, tests, and OpenAPI documentation
-- Product documents: [[01 - Product North Star]], [[02 - Product Scope]], [[03 - User and Market]], [[04 - Requirements Map]]
+- Product documents: [[01 - Product North Star]], [[02 - Product Scope]], [[03 - User and Market]], [[04 - Requirements Map]], [[../.humans/Architecture|Architecture]]
 - Later bets captured: customer-owned Ollama assistant and DevOps/container visibility in [[07 - Feature Plans]]
-- Execution: [[05 - Roadmap]], [[06 - Backlog]], [[07 - Feature Plans]], [[08 - Quality and Operations]]
+- Execution: [[05 - Roadmap]], [[06 - Backlog]], [[07 - Feature Plans]], [[08 - System Architecture]]
 
 ## This week
 
@@ -24,6 +24,7 @@
 - [[05 - Roadmap]]
 - [[06 - Backlog]]
 - [[07 - Feature Plans]]
+- [[08 - System Architecture]]
 - [[09 - Decisions]]
 - [[10 - Risks and Open Questions]]
 - [[11 - Project Journal]]

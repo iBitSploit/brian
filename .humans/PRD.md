@@ -1,7 +1,7 @@
 # Product Requirements Document: Brian
 ## Open-Source Network & Infrastructure Topology Platform
 
-**Version:** 1.1  
+**Version:** 1.2
 **Last Updated:** September 25, 2026  
 
 ---
@@ -646,9 +646,11 @@ All endpoints require `Authorization: Bearer <API_TOKEN>` header.
 
 ## 10. Technical Architecture
 
+The full service, communication, and workflow description is in [Architecture.md](./Architecture.md). That document is the implementation architecture of record.
+
 ### Stack
-- **Frontend**: React 18+, TypeScript, Cytoscape.js, Material-UI or Shadcn/ui
-- **Backend**: Node.js (Express) or Python (FastAPI/Django)
+- **Frontend**: React 18+, TypeScript, Vite, Cytoscape.js or equivalent, Brian CSS variables (Lucide icons)
+- **Backend**: Python Flask (application factory, blueprints, SQLAlchemy, Marshmallow, Flask-Migrate). Not Node.js or FastAPI for MVP.
 - **Database**: PostgreSQL 13+ with PostGIS (for geographic topology)
 - **Cache**: Redis (for session management, rate limiting)
 - **Message Queue**: Optional (for async scan processing)
@@ -887,5 +889,6 @@ Containers and workloads are additional node types or child objects of existing 
 **Change Log**
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
+| 1.2 | Sep 25, 2026 | Product Team | Pointed technical architecture at Architecture.md and locked Flask as the MVP API. |
 | 1.1 | Sep 25, 2026 | Product Team | Captured post-MVP Ollama assistant and DevOps/container visibility from operator input. |
 | 1.0 | Sep 2026 | Product Team | Initial PRD |

@@ -23,3 +23,11 @@ Customer-owned assistant and container/lifecycle visibility are wanted product d
 **Status:** accepted
 
 If console or exec is offered, it uses customer-owned credentials or a runtime API, is explicitly enabled, and is auditable. Brian does not become a general jump host.
+
+## D-004 - Implementation stack
+
+**Date:** 2026-09-25
+**Status:** accepted
+**Source:** [[08 - System Architecture]]
+
+MVP implementation is a React + TypeScript + Vite frontend, a Flask API with blueprints and SQLAlchemy, and PostgreSQL as the system of record. Redis is optional. This replaces the PRD's "Node or Python" fork for implementation.

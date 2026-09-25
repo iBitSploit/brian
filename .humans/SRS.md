@@ -1,7 +1,7 @@
 # Software Requirements Specification: Brian
 
 **Project:** Brian - Open-Source Network and Infrastructure Topology Platform  
-**Document Version:** 1.1  
+**Document Version:** 1.2
 **Date:** September 25, 2026  
 
 ---
@@ -129,8 +129,8 @@ Inspects which workloads run on which hosts, reviews a simple lifecycle view, an
 - Minimum supported viewport: 1024 pixels wide for the full desktop layout.
 - Backend database: PostgreSQL 13 or later.
 - Optional cache: Redis.
-- Frontend: React 18 or later with TypeScript and Cytoscape.js or an equivalent graph library.
-- Backend: Node.js/Express or Python/FastAPI/Django, selected during implementation.
+- Frontend: React 18 or later with TypeScript, Vite, and Cytoscape.js or an equivalent graph library.
+- Backend: Python Flask application factory and blueprints, as specified in Architecture.md.
 - Agent runtime: Linux container or bare-metal service with network access to target assets.
 
 ### 2.4 Design Principles
@@ -147,6 +147,8 @@ Inspects which workloads run on which hosts, reviews a simple lifecycle view, an
 ## 3. System Architecture Requirements
 
 ### 3.1 Component Architecture
+
+The container and communication design is specified in Architecture.md.
 
 **NFR-ARCH-001 (Must):** The system shall separate frontend presentation, backend API/business logic, persistence, and agent responsibilities.
 
@@ -972,5 +974,6 @@ These capabilities are not acceptance requirements for the MVP unless explicitly
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 1.2 | September 25, 2026 | Product Team | Locked Flask as the MVP backend and referenced Architecture.md. |
 | 1.1 | September 25, 2026 | Product Team | Recorded post-MVP Could requirements for customer-owned Ollama and DevOps/container visibility. |
 | 1.0 | September 24, 2026 | Product Team | Initial SRS derived from the PRD and NetBox client requirements. |

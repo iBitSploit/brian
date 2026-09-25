@@ -6,6 +6,7 @@ This note translates the product documents into build areas.
 
 - [[../.humans/PRD|PRD]]: product intent, data model, workflows, roadmap. Post-MVP Ollama and DevOps in Section 17.
 - [[../.humans/SRS|SRS]]: testable functional, interface, security, and performance requirements. Could-priority AI and workload requirements in Section 14.
+- [[../.humans/Architecture|Architecture]]: services Brian makes and uses, communication, and workflows. Vault map: [[08 - System Architecture]].
 - [[07 - Feature Plans]]: accepted later capabilities that must not enter the current build.
 
 ## Requirement areas
