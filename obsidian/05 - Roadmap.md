@@ -71,5 +71,7 @@ Exit criteria: a 500-node topology remains readable and usable.
 - Alerts and notifications.
 - Kubernetes and high availability.
 - Terraform provider.
+- Customer-owned Ollama AI assistant ([[07 - Feature Plans]]).
+- DevOps lifecycle, container-on-host visibility, logs, and optional console access ([[07 - Feature Plans]]).
 
 Do not pull later possibilities into MVP without evidence that the core loop is adopted.

@@ -18,6 +18,10 @@ Needs asset context during an investigation. Cares about relationships, recent o
 
 Manages mixed cloud and on-premises infrastructure. Needs integrations, agents, automation, and an API that fits existing workflows.
 
+### DevOps engineer (later)
+
+Needs to see workload placement on hosts, a simple lifecycle, logs, and optional console access from the same operational picture. Does not expect Brian to replace Kubernetes UIs or a log platform.
+
 ### Compliance and GRC user
 
 Needs an inspectable inventory, segmentation context, exportable records, and eventually audit history.
@@ -42,6 +46,8 @@ It should not claim to replace:
 - Nmap as a scanning engine.
 - SIEM, EDR, or vulnerability management systems.
 - Network management and configuration platforms.
+- Ollama or any other LLM runtime.
+- Docker, Kubernetes, or a logging SaaS as the system of record for workloads.
 
 ## Differentiation
 

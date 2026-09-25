@@ -4,9 +4,9 @@ This note translates the product documents into build areas.
 
 ## Product sources
 
-- [[../HUMAN/PRD|PRD]]: product intent, data model, workflows, roadmap.
-- [[../HUMAN/NetBox|NetBox client notes]]: topology presentation and visual behavior.
-- [[../HUMAN/SRS|SRS]]: testable functional, interface, security, and performance requirements.
+- [[../.humans/PRD|PRD]]: product intent, data model, workflows, roadmap. Post-MVP Ollama and DevOps in Section 17.
+- [[../.humans/SRS|SRS]]: testable functional, interface, security, and performance requirements. Could-priority AI and workload requirements in Section 14.
+- [[07 - Feature Plans]]: accepted later capabilities that must not enter the current build.
 
 ## Requirement areas
 
@@ -20,6 +20,8 @@ This note translates the product documents into build areas.
 | Icons | Library, upload, assignment | Safe upload, metadata, storage | File and SVG security tests |
 | Exports | JSON, CSV, SVG, PNG controls | Scope, serialization, render/export jobs | Snapshot and export tests |
 | Settings | Theme, layout, preferences | Configuration and persistence | Browser and config tests |
+| Ollama assistant (later) | Optional ask panel, citations | Isolated client, no secrets in prompts | Unreachable-Ollama still serves MVP |
+| Workloads (later) | Host inspector overlay, logs/console entry | Child objects, runtime adapter, audit | Progressive disclosure on host nodes |
 
 ## Cross-cutting requirements
 

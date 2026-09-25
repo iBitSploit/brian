@@ -28,6 +28,15 @@ Brian MVP must provide:
 - VPN and overlay topology visualization.
 - High availability and multi-instance coordination.
 - Kubernetes production support.
+- LLM assistant or Ollama integration.
+- Container control plane, CI/CD replacement, log platform, or remote console/exec.
+
+## Later, explicitly wanted
+
+These are accepted after the core loop is healthy. Details live in [[07 - Feature Plans]].
+
+- Optional AI assistant backed only by a customer-owned Ollama service on a network the operator chooses.
+- DevOps lifecycle overlay: which containers run on which servers, plus logs and optional console access through customer-owned tooling.
 
 ## Scope guard
 

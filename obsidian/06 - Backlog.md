@@ -46,6 +46,12 @@ Use this as the actionable queue. Keep individual tasks small enough to finish i
 - [ ] Alert rules and notifications.
 - [ ] Kubernetes deployment.
 - [ ] Terraform provider.
+- [ ] Add optional Ollama assistant settings so operators can point Brian at a customer-owned model endpoint they choose.
+- [ ] Add an ask-the-topology panel that cites devices and sources and never includes secrets in prompts.
+- [ ] Represent containers as child objects of hosts so DevOps can see what runs where.
+- [ ] Add a simple workload lifecycle view without building a CI/CD product.
+- [ ] Add bounded log access or deep-links to a customer-owned log system from a selected workload.
+- [ ] Add optional auditable console/exec access using customer-owned credentials, not a Brian-owned shell.
 
 ## Task format
 

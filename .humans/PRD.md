@@ -1,8 +1,8 @@
 # Product Requirements Document: Brian
 ## Open-Source Network & Infrastructure Topology Platform
 
-**Version:** 1.0  
-**Last Updated:** September 2026  
+**Version:** 1.1  
+**Last Updated:** September 25, 2026  
 
 ---
 
@@ -61,6 +61,12 @@ Enable infrastructure and security teams to see, understand, and manage their en
 - Needs to export/verify asset inventories
 - Requires network segmentation views
 - Needs audit trails and documentation
+
+**Persona 4: DevOps / Platform Engineer**
+- Needs to see which containers run on which servers
+- Wants a lifecycle view of build, deploy, run, and retire
+- Needs logs and optional console access without leaving operational context
+- Expects integrations with tools the team already owns, not a new SaaS control plane
 
 ---
 
@@ -751,6 +757,8 @@ brian/
 - Alerting/notifications system
 - Advanced analytics dashboard
 - Terraform provider for infrastructure-as-code
+- Customer-owned Ollama AI assistant (see Section 17)
+- DevOps lifecycle and container visibility (see Section 17)
 
 ---
 
@@ -763,6 +771,8 @@ brian/
 - Mobile app
 - Predictive analytics / ML-based anomaly detection
 - Browser-based network packet capture
+- Built-in hosted LLM or any vendor-hosted model API as a default
+- Full container orchestration, CI/CD replacement, or unrestricted remote shell product
 
 ---
 
@@ -796,6 +806,8 @@ brian/
 | **OSINT** | Open Source Intelligence (reconnaissance) |
 | **Layer 2** | Data link layer (MAC addresses, switches, VLANs) |
 | **Layer 3** | Network layer (IP addresses, routing) |
+| **Ollama** | Customer-owned local LLM runtime; Brian may connect to it later, but never hosts or requires it |
+| **Container runtime** | Docker, containerd, or equivalent process isolation on a host already represented in topology |
 
 ---
 
@@ -821,7 +833,59 @@ docker run -d \
 
 ---
 
+## 17. Planned Post-MVP Capabilities
+
+These capabilities are accepted product direction. They are **not** MVP acceptance criteria and must not displace topology, discovery, provenance, or agent work.
+
+### 17.1 Customer-Owned Ollama AI Assistant
+
+Brian should later offer an optional AI assistant that answers questions about the operator's own topology, inventory, and observations.
+
+**Intent**
+- Help operators ask natural-language questions such as "which hosts in DC1 have SSH open?" without leaving Brian.
+- Keep the model and runtime under the customer's control.
+
+**Non-negotiable constraints**
+- The Ollama service is owned, deployed, and networked by the customer. Brian does not ship or host a model.
+- The operator chooses the reachable Ollama base URL, model name, and which Brian network or deployment may contact it.
+- Brian must not send topology, scan, or credential data to a third-party hosted LLM by default.
+- Prompts and responses must respect existing secret-redaction rules. Tokens, NetBox credentials, and agent secrets must never be included in model context.
+- The assistant is an overlay on existing APIs. It must not become a second source of truth or write inventory without an explicit, confirmed operator action.
+- If Ollama is unreachable, Brian remains fully usable without the assistant.
+
+**Likely surface**
+- Settings: enable assistant, Ollama URL, model, timeout, and allowed networks.
+- Optional chat or "ask this topology" panel scoped to current filters and selected nodes.
+- Citations back to devices, scans, and sources rather than unsourced answers.
+
+### 17.2 DevOps Lifecycle and Container Visibility
+
+Brian should later help DevOps and platform engineers see runtime software in the same topology as the hosts that run it.
+
+**Intent**
+- Visualize a simple lifecycle of services and workloads (plan, deploy, run, stop, retire) without becoming a CI/CD product.
+- Show which containers (or equivalent workloads) run on which servers already present in the topology.
+- Make logs and optional console access easier to reach from that context.
+
+**Candidate capabilities**
+- Host-to-container (or host-to-workload) overlay on the topology or a related inspector.
+- Runtime status per container: running, stopped, unknown, last seen.
+- Log tail or deep-link to an existing log system the customer already operates.
+- Optional console or exec access only through customer-owned credentials, an existing jump host, or a documented runtime API. Brian must not store unrestricted root shells or become a general remote-access product.
+- Progressive disclosure: containers are detail on a host, not a second noisy graph by default.
+
+**Non-goals**
+- Replacing Kubernetes dashboards, Docker Desktop, or full APM.
+- Collecting application performance traces as a core product.
+- Granting console access without explicit operator configuration and auditability.
+
+**Relationship to core product**
+Containers and workloads are additional node types or child objects of existing devices. They must reuse provenance, status, filtering, and export patterns already defined for devices.
+
+---
+
 **Change Log**
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
+| 1.1 | Sep 25, 2026 | Product Team | Captured post-MVP Ollama assistant and DevOps/container visibility from operator input. |
 | 1.0 | Sep 2026 | Product Team | Initial PRD |

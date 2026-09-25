@@ -1,8 +1,8 @@
 # Software Requirements Specification: Brian
 
 **Project:** Brian - Open-Source Network and Infrastructure Topology Platform  
-**Document Version:** 1.0  
-**Date:** September 24, 2026  
+**Document Version:** 1.1  
+**Date:** September 25, 2026  
 
 ---
 
@@ -36,7 +36,7 @@ Brian shall provide a single-server MVP with the following capabilities:
 - REST API access using bearer tokens
 - Docker Compose deployment with persistent storage
 
-The MVP shall not provide built-in user authentication, multi-tenant isolation, real-time traffic analysis, mobile applications, VPN topology visualization, vulnerability database integration, predictive analytics, or browser-based packet capture.
+The MVP shall not provide built-in user authentication, multi-tenant isolation, real-time traffic analysis, mobile applications, VPN topology visualization, vulnerability database integration, predictive analytics, browser-based packet capture, an LLM assistant, container orchestration, workload log aggregation as a primary product, or remote console/exec access.
 
 ### 1.3 Product Goals
 
@@ -61,6 +61,8 @@ The MVP shall not provide built-in user authentication, multi-tenant isolation, 
 | RBAC | Role-based access control. |
 | API | Application Programming Interface. |
 | SRS | Software Requirements Specification. |
+| Ollama | A customer-owned local large language model runtime that Brian may optionally call after MVP. |
+| Workload | A container or equivalent runtime process hosted on a device already represented in topology. |
 
 ### 1.5 Requirement Conventions
 
@@ -115,6 +117,10 @@ Deploys Brian, configures integrations and tokens, manages agents, and reviews o
 #### UC-06: Distributed Agent
 
 Authenticates to Brian, sends heartbeats, uploads scan results, and receives agent-specific configuration where supported.
+
+#### UC-07: DevOps or Platform Engineer (post-MVP)
+
+Inspects which workloads run on which hosts, reviews a simple lifecycle view, and reaches logs or console access through customer-owned tooling. This user class does not change MVP acceptance.
 
 ### 2.3 Operating Environment
 
@@ -869,6 +875,8 @@ The following matrix maps major PRD capabilities to this SRS.
 | Docker Compose deployment | NFR-DEP |
 | Security and token handling | SEC-AUTH through SEC-DATA |
 | MVP exclusions | Section 1.2 and Section 13 |
+| Customer-owned Ollama assistant | Section 14.1 |
+| DevOps lifecycle and container visibility | Section 14.2 |
 
 ---
 
@@ -901,6 +909,8 @@ The following matrix maps major PRD capabilities to this SRS.
 - High-availability multi-instance deployment.
 - Kubernetes support beyond documented future direction.
 - LDAP, SSO, and built-in RBAC.
+- LLM assistant, including Ollama integration.
+- Container or Kubernetes control plane, lifecycle CI/CD, log platform replacement, and remote console/exec.
 
 ---
 
@@ -919,8 +929,42 @@ The architecture should leave extension points for:
 - High availability and Kubernetes deployment.
 - Terraform provider support.
 - mTLS for agent communication.
+- Optional outbound client to a customer-owned Ollama endpoint.
+- Workload/container child objects attached to existing devices.
 
 These capabilities are not acceptance requirements for the MVP unless explicitly promoted into scope.
+
+### 14.1 Customer-Owned Ollama Assistant (Could)
+
+**FR-AI-001 (Could):** Administrators should be able to configure an optional Ollama base URL, model identifier, and timeout without Brian hosting or bundling a model.
+
+**FR-AI-002 (Could):** The operator should choose which Brian network, site, or deployment is permitted to reach the Ollama service.
+
+**FR-AI-003 (Could):** The assistant should answer questions using Brian-held topology and inventory context and cite the devices, scans, or sources used.
+
+**FR-AI-004 (Could):** If the Ollama endpoint is disabled or unreachable, all MVP features shall continue to operate.
+
+**SEC-AI-001 (Could, required if implemented):** Topology, scan, and configuration payloads sent to Ollama shall exclude secrets, tokens, passwords, and raw credential fields.
+
+**SEC-AI-002 (Could, required if implemented):** Brian shall not call third-party hosted model APIs unless the operator explicitly configures a destination they own or control.
+
+**IR-AI-001 (Could):** The Ollama client shall be an isolated integration boundary under `/api/v1`, not embedded in topology rendering or persistence services.
+
+### 14.2 DevOps Lifecycle and Container Visibility (Could)
+
+**FR-WORK-001 (Could):** The system should represent containers or equivalent workloads as child objects of existing host devices rather than a disconnected inventory.
+
+**FR-WORK-002 (Could):** Users should be able to see which workloads run on which servers, including runtime state and last-seen time when available.
+
+**FR-WORK-003 (Could):** The system should present a simple lifecycle view for a workload (at least deploy/run/stop/retire or documented equivalents) without implementing a CI/CD engine.
+
+**FR-WORK-004 (Could):** Users should be able to reach logs for a selected workload either by retrieving a bounded tail from a configured runtime API or by deep-linking to a customer-owned log system.
+
+**FR-WORK-005 (Could):** Optional console or exec access, if offered, shall use customer-owned credentials or a documented runtime API, require explicit enablement, and be auditable.
+
+**SEC-WORK-001 (Could, required if implemented):** Console or exec sessions shall not persist unrestricted credentials in logs, exports, or ordinary API responses.
+
+**NFR-WORK-001 (Could):** Workload detail shall use progressive disclosure so host topology remains the primary canvas.
 
 ---
 
@@ -928,4 +972,5 @@ These capabilities are not acceptance requirements for the MVP unless explicitly
 
 | Version | Date | Author | Change |
 |---|---|---|---|
+| 1.1 | September 25, 2026 | Product Team | Recorded post-MVP Could requirements for customer-owned Ollama and DevOps/container visibility. |
 | 1.0 | September 24, 2026 | Product Team | Initial SRS derived from the PRD and NetBox client requirements. |

@@ -44,3 +44,5 @@ Brian succeeds when a team can answer these questions in under five minutes:
 - Distributed agents unlock environments that cannot be reached from the central server.
 - Provenance and freshness create trust.
 - A useful API allows the frontend and future integrations to evolve independently.
+- Later, a customer-owned Ollama assistant can explain topology without sending data to a vendor model.
+- Later, host-to-container visibility can extend the same topology to DevOps runtime context without becoming an orchestrator.
