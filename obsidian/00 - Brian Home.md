@@ -1,13 +1,13 @@
 # Brian Home
 
-> A calm operating system for building Brian: see infrastructure clearly, discover it continuously, and make it understandable to the people responsible for it.
+> Brian is a prject I've been dreaming and constantly thinking about, it's an ultimate source-of-truth platform for anyone technical
 
 ## Current state
 
 - Phase: MVP foundation
 - Frontend: React, TypeScript, Vite, local mock data
 - Backend: Flask API with JWT, SQLAlchemy, Marshmallow, migrations configuration, tests, and OpenAPI documentation
-- Product documents: [[01 - Product North Star]], [[02 - Product Scope]], [[03 - User and Market]], [[04 - Requirements Map]], [[../.humans/Architecture|Architecture]]
+- Product documents: [[01 - Product North Star]], [[02 - Product Scope]], [[03 - User and Market]], [[04 - Requirements Map]]
 - Later bets captured: customer-owned Ollama assistant and DevOps/container visibility in [[07 - Feature Plans]]
 - Execution: [[05 - Roadmap]], [[06 - Backlog]], [[07 - Feature Plans]], [[08 - System Architecture]]
 
