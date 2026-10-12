@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from 'react'
+import TopologyDashboard from './features/topology/TopologyDashboard'
 
 type ViewId =
   | 'dashboard'
@@ -262,85 +263,7 @@ export default function App() {
 
           {/* Topology */}
           <section className={`view${view === 'topology' ? ' active' : ''}`}>
-            <div className="view-heading">
-              <div className="actions">
-                <button className="button" onClick={() => notify('Export is available once data is connected')}>Export</button>
-                <button className="button primary" onClick={() => notify('Add connection: select two devices first')}>Add connection</button>
-              </div>
-            </div>
-            <div className="topology-shell">
-              <aside className="topology-sidebar">
-                <div className="eyebrow">View controls</div>
-                <div className="field" style={{ marginTop: 15 }}>
-                  <label htmlFor="layout">Layout</label>
-                  <select id="layout" defaultValue="Hierarchical">
-                    <option>Hierarchical</option>
-                    <option>Force-directed</option>
-                    <option>Radial</option>
-                    <option>Breadth-first</option>
-                  </select>
-                </div>
-                <div className="field">
-                  <label htmlFor="group">Group by</label>
-                  <select id="group" defaultValue="None">
-                    <option>None</option>
-                    <option>Site</option>
-                    <option>Network</option>
-                    <option>Device type</option>
-                    <option>Function</option>
-                  </select>
-                </div>
-                <label className="check"><input type="checkbox" defaultChecked /> Show grid</label>
-                <label className="check"><input type="checkbox" /> Snap to grid</label>
-                <label className="check"><input type="checkbox" defaultChecked /> Show labels</label>
-                <div className="filter-section">
-                  <h3>Filters</h3>
-                  <div className="filter-option"><span>Online</span><span>0</span></div>
-                  <div className="filter-option"><span>Offline</span><span>0</span></div>
-                  <div className="filter-option"><span>Unknown</span><span>0</span></div>
-                  <button className="button ghost" onClick={() => notify('Filter management is coming soon')}>Manage filters →</button>
-                </div>
-              </aside>
-
-              <div className="canvas-area">
-                <div className="canvas-toolbar">
-                  <div className="toolbar-cluster">
-                    <button className="toolbar-button" title="Zoom out" onClick={() => notify('Nothing to zoom yet')}>−</button>
-                    <button className="toolbar-button" title="Zoom in" onClick={() => notify('Nothing to zoom yet')}>＋</button>
-                    <button className="toolbar-button" title="Fit to screen" onClick={() => notify('Nothing to fit yet')}>⌗</button>
-                    <button className="toolbar-button" title="Reset layout" onClick={() => notify('Layout reset')}>↻</button>
-                  </div>
-                  <div className="toolbar-cluster">
-                    <button className="toolbar-button selected" title="Select">↖</button>
-                    <button className="toolbar-button" title="Pan" onClick={() => notify('Pan mode')}>✥</button>
-                    <button className="toolbar-button" title="Add node" onClick={() => go('devices')}>＋</button>
-                  </div>
-                </div>
-                <div className="canvas-empty">
-                  <div className="canvas-empty-inner">
-                    <div className="empty-mark" style={{ background: 'var(--panel)' }}>⌘</div>
-                    <h2>Your topology is empty</h2>
-                    <p className="muted">Import infrastructure, add a device manually, or connect an agent to see relationships here.</p>
-                    <div className="actions" style={{ justifyContent: 'center' }}>
-                      <button className="button primary" onClick={() => go('devices')}>Add first device</button>
-                      <button className="button" onClick={() => go('integrations')}>Connect source</button>
-                    </div>
-                  </div>
-                </div>
-                <div className="canvas-legend">
-                  <div className="eyebrow">Legend</div>
-                  <div className="legend-item"><span className="line" /> Direct link</div>
-                  <div className="legend-item"><span className="line dashed" /> Inferred link</div>
-                </div>
-              </div>
-
-              <aside className="details-panel">
-                <div className="eyebrow">Inspector</div>
-                <Empty mark="◇" title="Nothing selected">
-                  <p>Select a node or connection to inspect its details.</p>
-                </Empty>
-              </aside>
-            </div>
+            <TopologyDashboard notify={notify} />
           </section>
 
           {/* Devices */}
