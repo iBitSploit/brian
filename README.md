@@ -1,6 +1,8 @@
 The frontend was made by the following
 ---
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/4156a9a7-a453-4043-b16b-2f9826ddabb0/deploy-status)](https://app.netlify.com/projects/brian-rag/deploys)
+
 I'm no software engineer, not even a dev
 
 After asking DeekSeek about what the best option for to me pick for a frontend that would be most easy for an AI ti understand
