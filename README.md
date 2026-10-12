@@ -52,3 +52,22 @@ uv add pynetbox
 uv add gunicorn
 uv add fastapi
 ```
+## Running with Docker
+
+```sh
+docker compose up --build
+```
+
+- Frontend: http://localhost:8080 (override with `BRIAN_PORT`)
+- Backend health: proxied at http://localhost:8080/api/health
+
+Each service can also be built on its own:
+
+```sh
+docker build -t brian-frontend ./frontend
+docker build -t brian-backend ./backend
+```
+
+## Deploying to Netlify
+
+`netlify.toml` at the repository root builds only the frontend (`frontend/`, output `dist/`), adds the SPA fallback redirect, and sets Node 22. Netlify does not run the Docker services; the backend needs its own host before the frontend can call `/api`.

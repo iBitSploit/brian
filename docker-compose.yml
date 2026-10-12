@@ -1,0 +1,28 @@
+name: brian
+
+services:
+  backend:
+    build:
+      context: ./backend
+    image: brian-backend:latest
+    restart: unless-stopped
+    environment:
+      PYTHONUNBUFFERED: "1"
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=2).status == 200 else 1)"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+    image: brian-frontend:latest
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${BRIAN_PORT:-8080}:8080"
