@@ -40,6 +40,13 @@ class NetBoxPlugin:
         api=pynetbox.api(config["url"].rstrip("/"), token=config["token"])
         api.http_session.verify=config.get("verify_tls",True)
         api.http_session.headers.update({"User-Agent":"Brian-Integration/netbox"})
+        # requests.Session ignores a custom .timeout attribute; wrap request to apply it.
+        original_request = api.http_session.request
+        timeout = config.get("timeout_seconds", 15)
+        def request_with_timeout(method, url, **kwargs):
+            kwargs.setdefault("timeout", timeout)
+            return original_request(method, url, **kwargs)
+        api.http_session.request = request_with_timeout
         return api
     @staticmethod
     def _version(api):
@@ -53,7 +60,8 @@ class NetBoxPlugin:
         try: return tuple(int(p) for p in v.split(".")[:3])
         except (ValueError,AttributeError): return None
     def _check_version(self, version):
-        low=os.getenv("BRIAN_NETBOX_MIN_VERSION"); high=os.getenv("BRIAN_NETBOX_MAX_VERSION")
+        low=os.getenv("BRIAN_NETBOX_MIN_VERSION", "4.4.0")
+        high=os.getenv("BRIAN_NETBOX_MAX_VERSION", "4.6.99")
         if low and high:
             v,l,h=map(self._version_tuple,(version,low,high))
             if not v or not l or not h or not l <= v <= h:
