@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from 'react'
-import TopologyDashboard from './features/topology/TopologyDashboard'
+import TopologyPage from './features/topology/TopologyPage'
 
 type ViewId =
   | 'dashboard'
@@ -134,6 +134,10 @@ export default function App() {
     notify(`Selected ${file.name}`)
   }
 
+  if (view === 'topology') {
+    return <TopologyPage notify={notify} toast={toast} onBack={() => go('dashboard')} />
+  }
+
   return (
     <div className={`app${reducedMotion ? ' reduce-motion' : ''}`}>
       <aside className="sidebar">
@@ -259,11 +263,6 @@ export default function App() {
                 </div>
               </div>
             </div>
-          </section>
-
-          {/* Topology */}
-          <section className={`view${view === 'topology' ? ' active' : ''}`}>
-            <TopologyDashboard notify={notify} />
           </section>
 
           {/* Devices */}

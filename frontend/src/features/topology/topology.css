@@ -284,3 +284,38 @@
     border-top: 1px solid var(--border);
   }
 }
+
+/* Full-window page wrapper */
+.topo-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-height: 560px;
+  background: var(--bg);
+}
+.topo-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 60px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+}
+.topo-page-brand { display: flex; align-items: center; gap: 11px; }
+.topo-page-brand .brand-name { font-size: 16px; font-weight: 700; letter-spacing: -.03em; }
+.topo-page-brand .eyebrow { margin-left: 4px; }
+.topo-page-body {
+  flex: 1;
+  min-height: 0;
+  padding: 14px;
+}
+.topo-page .topo-dash {
+  height: 100%;
+  border-radius: var(--radius);
+}
+@media (max-width: 800px) {
+  .topo-page { height: auto; min-height: 100vh; }
+  .topo-page-body { min-height: 640px; }
+}
