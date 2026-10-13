@@ -52,9 +52,15 @@ Only mark objects stale after a successful, complete, untruncated snapshot with 
 ## API currently exposed
 - `GET /api/v1/integrations` — plugin metadata and schema.
 - `GET /api/v1/integrations/{plugin_id}/schema` — configuration schema.
-- `POST /api/v1/integrations/{plugin_id}/test` — stateless connection test.
+- `POST /api/v1/integrations/{plugin_id}/test` — stateless connection test (local/dev only; protect from public exposure).
+- `GET /api/v1/integrations/instances` — list saved instances without secret values.
+- `POST /api/v1/integrations/instances` — create a NetBox instance; encrypts its token.
+- `GET /api/v1/integrations/instances/{instance_id}` — get instance metadata.
+- `POST /api/v1/integrations/instances/{instance_id}/test` — test saved credentials.
+- `POST /api/v1/integrations/instances/{instance_id}/sync` — run bounded sync and return job ID/counters (currently inline, not queued).
+- `GET /api/v1/integrations/jobs/{job_id}` — retrieve persisted job status/counters.
 
-Instance CRUD, encrypted secret persistence routes, queued job endpoints, and complete sync orchestration remain follow-up work before production use. Do not expose the stateless test endpoint on a public deployment without authentication, rate limits, and SSRF protections.
+Instance update/delete routes, a durable background queue, and full canonical topology projection remain follow-up work before production use. Do not expose the stateless test endpoint on a public deployment without authentication, rate limits, and SSRF protections.
 
 ## Install and validate
 From `backend/`:
@@ -62,7 +68,7 @@ From `backend/`:
 uv sync --extra dev
 uv run pytest
 ```
-The dependency list has changed; regenerate and commit `uv.lock` with the project's pinned uv toolchain before treating the branch as reproducible. PostgreSQL migration `migrations/0001_integration_tables.sql` is a schema proposal; connect it to the project's chosen migration runner before deployment.
+The dependency list has changed; regenerate and commit `uv.lock` with the project's pinned uv toolchain before treating the branch as reproducible. Set `DATABASE_URL` to Brian's PostgreSQL database and configure the migration runner before using persistent endpoints. PostgreSQL migration `migrations/0001_integration_tables.sql` is a schema proposal; connect it to the project's chosen migration runner before deployment.
 
 ## Adding a plugin
 1. Create `src/backend/integrations/<slug>/`.
