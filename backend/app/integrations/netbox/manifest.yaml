@@ -1,0 +1,19 @@
+id: netbox
+name: NetBox
+plugin_version: 1.0.0
+module: app.integrations.netbox:NetBoxPlugin
+capabilities:
+  - test
+  - read
+  - sync
+external_system:
+  name: NetBox
+  access: read-only
+  client_library: pynetbox
+  client_version: pinned-by-deployment
+  supported_versions: configured-and-tested-by-release
+security:
+  requires_secret: true
+  secret_fields:
+    - token
+  default_tls_verification: true

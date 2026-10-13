@@ -1,0 +1,12 @@
+id: netbox
+name: NetBox
+plugin_version: 1.0.0
+module: backend.integrations.netbox:NetBoxPlugin
+capabilities: [test, read, sync]
+external_system:
+  access: read-only
+  client_library: pynetbox
+  supported_versions: release-tested-matrix-required
+security:
+  token_field: write-only
+  tls_verification_default: true
