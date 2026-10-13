@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from 'react'
 import TopologyPage from './features/topology/TopologyPage'
+import PluginsPage from './features/plugins/PluginsPage'
 
 type ViewId =
   | 'dashboard'
@@ -7,6 +8,7 @@ type ViewId =
   | 'devices'
   | 'scans'
   | 'integrations'
+  | 'plugins'
   | 'agents'
   | 'icons'
   | 'settings'
@@ -20,6 +22,7 @@ const VIEW_LABELS: Record<ViewId, string> = {
   devices: 'Devices',
   scans: 'Scan uploads',
   integrations: 'Integrations',
+  plugins: 'Plugins',
   agents: 'Agents',
   icons: 'Icon library',
   settings: 'Settings',
@@ -40,6 +43,7 @@ const NAV_GROUPS: { title: string; items: { id: ViewId; icon: string }[] }[] = [
     title: 'Operations',
     items: [
       { id: 'integrations', icon: '↗' },
+      { id: 'plugins', icon: '▦' },
       { id: 'agents', icon: '◈' },
       { id: 'icons', icon: '✦' },
     ],
@@ -296,6 +300,11 @@ export default function App() {
                 </button>
               </Empty>
             </div>
+          </section>
+
+          {/* Plugins catalog */}
+          <section className={`view${view === 'plugins' ? ' active' : ''}`}>
+            <PluginsPage notify={notify} />
           </section>
 
           {/* Integrations */}
