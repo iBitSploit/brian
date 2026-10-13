@@ -2,7 +2,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, JSON, String, Text, UniqueConstraint
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 def utcnow(): return datetime.now(timezone.utc)
 
@@ -43,5 +43,7 @@ class IntegrationObject(Base):
     external_url: Mapped[str | None] = mapped_column(Text)
     canonical_type: Mapped[str | None] = mapped_column(String(80))
     canonical_id: Mapped[str | None] = mapped_column(String(36))
+    payload_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    stale: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     last_seen_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
     last_successful_sync_id: Mapped[str | None] = mapped_column(String(36))
